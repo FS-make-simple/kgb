@@ -1,3 +1,10 @@
+`ORG.FSMS:`
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/FS-make-simple/kgb)
+![GitHub Release Date](https://img.shields.io/github/release-date/FS-make-simple/kgb)
+![GitHub repo size](https://img.shields.io/github/repo-size/FS-make-simple/kgb)
+![GitHub all releases](https://img.shields.io/github/downloads/FS-make-simple/kgb/total)
+![GitHub](https://img.shields.io/github/license/FS-make-simple/kgb)  
+
 # KGB Archiver (PAQ6v2+) • [![Build Status](https://travis-ci.org/fenollp/KGB_archiver.svg?branch=master)](https://travis-ci.org/fenollp/KGB_archiver)
 
 ```
@@ -62,13 +69,13 @@
 
 ## Original source head-comment
 
-KGB Archiver console version
-©2016 Pierre Fenoll <pierrefenoll@gmail.com>
-©2005-2006 Tomasz Pawlak, tomekp17@gmail.com, mod by Slawek (poczta-sn@gazeta.pl)
-based on PAQ6 by Matt Mahoney
+KGB Archiver console version  
+©2016 Pierre Fenoll <pierrefenoll@gmail.com>  
+©2005-2006 Tomasz Pawlak, tomekp17@gmail.com, mod by Slawek (poczta-sn@gazeta.pl)  
+based on PAQ6 by Matt Mahoney  
 
-PAQ6v2 - File archiver and compressor.
-(C) 2004, Matt Mahoney, mmahoney@cs.fit.edu
+PAQ6v2 - File archiver and compressor.  
+(C) 2004, Matt Mahoney, mmahoney@cs.fit.edu  
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 2 as
@@ -76,13 +83,13 @@ published by the Free Software Foundation at
 http://www.gnu.org/licenses/gpl.txt or (at your option) any later version.
 This program is distributed without any warranty.
 
-USAGE
+## USAGE
 
-To compress:      PAQ6 -3 archive file file...  (1 or more file names), or
-  or (MSDOS):     dir/b | PAQ6 -3 archive       (read file names from input)
-  or (UNIX):      ls    | PAQ6 -3 archive
-To decompress:    PAQ6 archive                  (no option)
-To list contents: more < archive
+To compress: `kgb -3 archive file file...` (1 or more file names), or  
+  or (MSDOS): `dir/b | kgb -3 archive` (read file names from input)  
+  or (UNIX): `ls | kgb -3 archive`  
+To decompress: `kgb archive` (no option)  
+To list contents: more < archive  
 
 Compression:  The files listed are compressed and stored in the archive,
 which is created.  The archive must not already exist.  File names may
@@ -90,18 +97,18 @@ specify a path, which is stored.  If there are no file names on the command
 line, then PAQ6 prompts for them, reading until the first blank line or
 end of file.
 
-The -3 is optional, and is used to trade off compression vs. speed
-and memory.  Valid options are -0 to -9.  Higher numbers compress better
-but run slower and use more memory.  -3 is the default, and gives a
+The `-3` is optional, and is used to trade off compression vs. speed
+and memory.  Valid options are `-0` to `-9`.  Higher numbers compress better
+but run slower and use more memory. `-3` is the default, and gives a
 reasonable tradeoff.  Recommended options are:
-
+```
   -0 to -2 for fast (2X over -3) but poor compression, uses 2-6 MB memory
   -3 for reasonably fast and good compression, uses 18 MB (default)
   -4 better compression but 3.5X slower, uses 64 MB
   -5 slightly better compression, 6X slower than -3, uses 154 MB
   -6 about like -5, uses 202 MB memory
   -7 to -9 use 404 MB, 808 MB, 1616 MB, about the same speed as -5
-
+```
 Decompression:  No file names are specified.  The archive must exist.
 If a path is stored, the file is extracted to the appropriate directory,
 which must exist.  PAQ6 does not create directories.  If the file to be
@@ -114,19 +121,19 @@ It is not possible to add, remove, or update files in an existing archive.
 If you want to do this, extract the files, delete the archive, and
 create a new archive with just the files you want.
 
-TO COMPILE
-
+## TO COMPILE
+```sh
 gxx -O PAQ6.cpp        DJGPP 2.95.2
 bcc32 -O2 PAQ6.cpp     Borland 5.5.1
 sc -o PAQ6.cpp         Digital Mars 8.35n
-
-g++ -O produces the fastest executable among free compilers, followed
+```
+`g++` -O produces the fastest executable among free compilers, followed
 by Borland and Mars.  However Intel 8 will produce the fastest and smallest
 Windows executable overall, followed by Microsoft VC++ .net 7.1 /O2 /G7
 
-PAQ6 DESCRIPTION
+## PAQ6 DESCRIPTION
 
-1. OVERVIEW
+### 1. OVERVIEW
 
 A PAQ6 archive has a header, listing the names and lengths of the files
 it contains in human-readable format, followed by the compressed data.
@@ -136,9 +143,9 @@ long string.
 
 PAQ6 uses predictive arithmetic coding.  The string, y, is compressed
 by representing it as a base 256 number, x, such that:
-
+```
   P(s < y) <= x < P(s <= y)                                             (1)
-
+```
 where s is chosen randomly from the probability distribution P, and x
 has the minimum number of digits (bytes) needed to satisfy (1).
 Such coding is within 1 byte of the Shannon limit, log 1/P(y), so
@@ -156,7 +163,7 @@ as the digits of x are read, the set of possible y satisfying (1)
 is restricted to an increasingly narrow lexicographical range containing y.
 All of the strings in this range will share a growing prefix.  Each time
 the prefix grows, we can output a character.
-
+```
             y
           +--------------------------+
   Uncomp- |                          V
@@ -173,13 +180,13 @@ the prefix grows, we can output a character.
           +-------------------------------------+
 
   Fig. 1.  Predictive arithmetic compression and decompression
-
+```
 Note that the model, which estimates P, is identical for compression
 and decompression.  Modeling can be expressed incrementally by the
 chain rule:
-
+```
   P(y) = P(y_1) P(y_2|y_1) P(y_3|y_1 y_2) ... P(y_n|y_1 y_2 ... y_n-1)  (2)
-
+```
 where y_i means the i'th character of the string y.  The output of the
 model is a distribution over the next character, y_i, given the context
 of characters seen so far, y_1 ... y_i-1.
@@ -189,7 +196,7 @@ output of a model is an estimate of P(y_i = 1 | context) (henceforth p),
 where y_i is the i'th bit, and the context is the previous i - 1 bits of
 uncompressed data.
 
-2.  PAQ6 MODEL
+### 2. PAQ6 MODEL
 
 The PAQ6 model consists of a weighted mix of independent submodels which
 make predictions based on different contexts.  The submodels are weighted
@@ -199,7 +206,7 @@ contexts) are averaged.  This estimate is then adjusted by secondary
 symbol estimation (SSE), which maps the probability to a new probability
 based on previous experience and the current context.  This final
 estimate is then fed to the encoder as illustrated in Fig. 2.
-
+```
   Uncompressed input
   -----+--------------------+-------------+-------------+
        |                    |             |             |
@@ -219,32 +226,32 @@ estimate is then fed to the encoder as illustrated in Fig. 2.
 
   Fig. 2.  PAQ6 Model details for compression.  The model is identical for
   decompression, but the encoder is replaced with a decoder.
-
+```
 In Sections 2-6, the description applies to the default memory option
 (-5, or MEM = 5).  For smaller values of MEM, some components are
 omitted and the number of contexts is less.
 
-3.  MIXER
+### 3. MIXER
 
 The mixers compute a probability by a weighted summation of the N
 models.  Each model outputs two numbers, n0 and n1 represeting the
 relative probability of a 0 or 1, respectively.  These are
 combined using weighted summations to estimate the probability p
 that the next bit will be a 1:
-
+```
       SUM_i=1..N w_i n1_i                                               (3)
   p = -------------------,  n_i = n0_i + n1_i
       SUM_i=1..N w_i n_i
-
+```
 The weights w_i are adjusted after each bit of uncompressed data becomes
 known in order to reduce the cost (code length) of that bit.  The cost
 of a 1 bit is -log(p), and the cost of a 0 is -log(1-p).  We find the
 gradient of the weight space by taking the partial derivatives of the
 cost with respect to w_i, then adjusting w_i in the direction
 of the gradient to reduce the cost.  This adjustment is:
-
+```
   w_i := w_i + e[ny_i/(SUM_j (w_j+wo) ny_j) - n_i/(SUM_j (w_j+wo) n_j)]
-
+```
 where e and wo are small constants, and ny_i means n0_i if the actual
 bit is a 0, or n1_i if the bit is a 1.  The weight offset wo prevents
 the gradient from going to infinity as the weights go to 0.  e is set
@@ -263,7 +270,7 @@ characters are more common in text than NUL bytes, while NULs are more
 common in binary data.  We compare the position of the 4th from last
 space with the position of the 4th from last 0 byte.
 
-4.  CONTEXT MODELS
+### 4. CONTEXT MODELS
 
 Individual submodels output a prediction in the form of two numbers,
 n0 and n1, representing relative probabilities of 0 and 1.  Generally
@@ -272,25 +279,25 @@ indexed by context.  When a 0 or 1 is encountered in a context, the
 appropriate count is increased by 1.  Also, in order to favor newer
 data over old, the opposite count is decreased by the following
 heuristic:
-
+```
   If the count > 25 then replace with sqrt(count) + 6 (rounding down)
   Else if the count > 1 then replace with count / 2 (rounding down)
-
+```
 The outputs are derived from the counts in a way that favors highly
 predictive contexts, i.e. those where one count is large and the
 other is small.  For the case of c1 >= c0 the following heuristic
 is used.
-
+```
   If c0 = 0 then n0 = 0, n1 = 4 c0
   Else n0 = 1, n1 = c1 / c0
-
+```
 For the case of c1 < c0 we use the same heuristic swapping 0 and 1.
 
 In the following example, we encounter a long string of zeros followed
 by a string of ones and show the model output.  Note how n0 and n1 predict
 the relative outcome of 0 and 1 respectively, favoring the most recent
 data, with weight n = n0 + n1
-
+```
   Input                 c0  c1  n0  n1
   -----                 --  --  --  --
   0000000000            10   0  40   0
@@ -300,7 +307,7 @@ data, with weight n = n0 + n1
   00000000001111         1   4   1   4
 
   Table 1.  Example of counter state (c0,c1) and outputs (n0,n1)
-
+```
 In order to represent (c0,c1) as an 8-bit state, counts are restricted
 to the values 0-40, 44, 48, 56, 64, 96, 128, 160, 192, 224, or 255.
 Large counts are incremented probabilistically.  For example, if
@@ -321,7 +328,7 @@ accessed elements are compared by using n (n0+n1) of the initial
 counter as the priority, and the lower priority element is discarded.
 Hash buckets are aligned on 64 byte addresses to minimize cache misses.
 
-5.  RUN LENGTH MODELS
+### 5. RUN LENGTH MODELS
 
 A second type of model is used to efficiently represent runs of
 up to 255 identical bytes within a context.  For example, given the
@@ -343,7 +350,7 @@ so an element occupies 2 bytes.  Generally, most models store one run
 length for every 8 counter pairs, so 20% of the memory is allocated to
 them.  Run lengths are used only for memory option (-MEM) of 5 or higher.
 
-6.  SUBMODEL DETAILS
+### 6. SUBMODEL DETAILS
 
 Submodels differ mainly in their contexts.  These are as follows:
 
@@ -354,7 +361,7 @@ bytes, plus the 0 to 7 bits of the partially read current byte.
 The maximum N depends on the -MEM option as shown in the table below.
 The order 0 and 1 contexts use a counter state lookup table rather
 than a hash table.
-
+```
   Order  Counters               Run lengths
   -----  --------               -----------
    0     2^8
@@ -371,7 +378,7 @@ than a hash table.
          2^(MEM+14), MEM >= 6   2^(MEM+14), MEM >= 6
 
   Table 2.  Number of modeled contexts of length 0-9
-
+```
 c.  MatchModel (long context).  A context is the last n whole bytes
 (plus extra bits) where n >=8.  Up to 4 matching contexts are found by
 indexing into a rotating input buffer whose size depends on MEM.  The
@@ -403,7 +410,7 @@ e.  SparseModel.  This models contexts with gaps.  It considers the
 following contexts, where x denotes the bytes considered and ? denotes
 the bit being predicted (plus preceding bits, which are included in
 the context).
-
+```
        x.x?  (first and third byte back)
       x..x?
      x...x?
@@ -415,7 +422,7 @@ the context).
   c ... xc?, gap length
 
   Table 3.  Sparse model contexts
-
+```
 The last two examples model variable gap lengths between the last byte
 and its previous occurrence.  The length of the gap (up to 255) is part
 of the context.
@@ -425,7 +432,7 @@ e.  AnalogModel.  This is intended to model 16-bit audio (mono or stereo),
 the low order bits, and include the position within the file modulo
 2, 3, or 4.  There are 8 models, combined into 4 by addition before
 mixing.  An x represents those bits which are part of the context.
-
+```
   16 bit audio:
     xxxxxx.. ........ xxxxxx.. ........ ?  (position mod 2)
     xxxx.... ........ xxxxxx.. ........ ?  (position mod 2)
@@ -443,7 +450,7 @@ mixing.  An x represents those bits which are part of the context.
     xxxxxxxx (skip 215 bytes...) xxxxxxxx (skip 215 bytes...) ?
 
   Table 4.  Analog models.
-
+```
 f.  WordModel.  This is intended to model text files.  There are
 3 contexts:
 
@@ -475,7 +482,7 @@ entry up to the current bit, then the next bit from the table is
 predicted with weight n for yy, 4n for zz, and 16n for 00/FF, where n
 is the count.
 
-7.  SSE
+### 7. SSE
 
 The purpose of the SSE stage is to further adjust the probability
 output from the mixers to agree with actual experience.  Ideally this
@@ -483,7 +490,7 @@ should not be necessary, but in reality this can improve compression.
 For example, when "compressing" random data, the output probability
 should be 0.5 regardless of what the models say.  SSE will learn this
 by mapping all input probabilities to 0.5.
-
+```
     | Output   __
     | p      /
     |       /
@@ -496,7 +503,7 @@ by mapping all input probabilities to 0.5.
     +-------------
 
   Fig. 3.  Example of an SSE mapping.
-
+```
 SSE maps the probability p back to p using a piecewise linear function
 with 32 segments.  Each vertex is represented by a pair of 8-bit counters
 (n0, n1) except that now the counters use a stationary model.  When the
@@ -517,10 +524,11 @@ context.
 
 The final output to the encoder is a weighted average of the SSE
 input and output, with the output receiving 3/4 of the weight:
-
+```
   p := (3 SSE(p) + p) / 4.                                              (4)
+```
 
-8.  MEMORY USAGE
+### 8. MEMORY USAGE
 
 The -m option (MEM = 0 through 9) controls model and memory usage.  Smaller
 numbers compress faster and use less memory, while higher numbers compress
@@ -532,7 +540,7 @@ memory by 20%).  For MEM < 1, SSE is not used.  For MEM < 5, the record,
 sparse, and analog models are not used.  For MEM < 4, the word model is
 not used.  The order of the char model ranges from 4 to 9 depending on
 MEM for MEM as shown in Table 6.
-
+```
              Run        Memory used by........................   Total
  MEM  Mixers Len  Order Char Match Record Sparse Analog Word SSE Memory (MB)
  ---  ------ ---  ----- ---- ----- ------ ------ ------ ---- --- -----------
@@ -548,15 +556,16 @@ MEM for MEM as shown in Table 6.
   9     2   yes   9     992  256     100    90     36   240  .12   1616
 
   Table 5.  Memory usage depending on MEM (-0 to -9 option).
+```
 
-9.  EXPERIMENTAL RESULTS
+### 9. EXPERIMENTAL RESULTS
 
 Results on the Calgary corpos are shown below for some top data compressors
 as of Dec. 30, 2003.  Options are set for maximum compression.  When
 possible, the files are all compressed into a single archive.  Run times
 are on a 705 MHz Duron with 256 MB memory, and include 3 seconds to run
 WRT when applicable.  PAQ6 was compiled with DJGPP (g++) 2.95.2 -O.
-
+```
   Original size   Options        3,141,622  Time   Author
   -------------   -------        ---------  ----   ------
   gzip 1.2.4      -9             1,017,624     2   Jean Loup Gailly
@@ -578,13 +587,13 @@ WRT when applicable.  PAQ6 was compiled with DJGPP (g++) 2.95.2 -O.
   WRT20 + PAQ6    -6               617,734   439
 
   Table 6.  Compressed size of the Calgary corpus.
-
+```
 WRT11 is a word reducing transform written by Przemyslaw Skibinski.  It
 uses an external English dictionary to replace words with 1-3 byte
 symbols to improve compression.  rkc, compressia, and durilca use a
 similar approach.  WRT20 is a newer version of WRT11.
 
-10.  ACKNOWLEDGMENTS
+### 10. ACKNOWLEDGMENTS
 
 Thanks to Serge Osnach for introducing me to SSE (in PAQ1SSE/PAQ2) and
 the sparse models (PAQ3N).  Also, credit to Eugene Shelwein,
